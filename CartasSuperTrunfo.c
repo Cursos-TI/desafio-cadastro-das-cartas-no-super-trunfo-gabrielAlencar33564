@@ -97,7 +97,7 @@ void compareCards(Card card1, Card card2)
   printComparisonResult("Area", card1.id, card2.id, card1.area > card2.area);
   printComparisonResult("PIB", card1.id, card2.id, card1.pib > card2.pib);
   printComparisonResult("Pontos Turisticos", card1.id, card2.id, card1.numberTouristAttractions > card2.numberTouristAttractions);
-  printComparisonResult("Densidade Populacional", card1.id, card2.id, card1.populationDensity > card2.populationDensity);
+  printComparisonResult("Densidade Populacional", card1.id, card2.id, card1.populationDensity < card2.populationDensity);
   printComparisonResult("PIB per Capita", card1.id, card2.id, card1.pibPerCapita > card2.pibPerCapita);
   printComparisonResult("Super Poder", card1.id, card2.id, superPower1 > superPower2);
 }
