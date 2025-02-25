@@ -68,48 +68,38 @@ void createCard(Card *card, int id)
 }
 
 // funcao para calcular o super poder da carta
-long double calculateSuperPower(Card card)
+float calculateSuperPower(Card card)
 {
-  return (long double)card.population + card.area + card.pib +
-         card.numberTouristAttractions + card.pibPerCapita +
-         (1 / card.populationDensity);
+  float inverseDensity = 1 / card.populationDensity;
+
+  float superPower = (float)card.population + card.area + card.pib +
+                     (float)card.numberTouristAttractions + card.pibPerCapita +
+                     inverseDensity;
+
+  return superPower;
+}
+
+// funcao para imprimir o resultado da comparacao
+void printComparisonResult(const char *type, int card1Id, int card2Id, int comparisonResult)
+{
+  printf("%s: Carta %d venceu (%d)\n", type, comparisonResult ? card1Id : card2Id, comparisonResult);
 }
 
 // funcao para comparar as cartas
 void compareCards(Card card1, Card card2)
 {
-  long double superPower1 = calculateSuperPower(card1);
-  long double superPower2 = calculateSuperPower(card2);
+  float superPower1 = calculateSuperPower(card1);
+  float superPower2 = calculateSuperPower(card2);
 
   printf("Comparacao de Cartas:\n");
 
-  printf("Populacao: Carta %d venceu (%d)\n",
-         card1.population > card2.population ? card1.id : card2.id,
-         card1.population > card2.population);
-
-  printf("Area: Carta %d venceu (%d)\n",
-         card1.area > card2.area ? card1.id : card2.id,
-         card1.area > card2.area);
-
-  printf("PIB: Carta %d venceu (%d)\n",
-         card1.pib > card2.pib ? card1.id : card2.id,
-         card1.pib > card2.pib);
-
-  printf("Pontos Turisticos: Carta %d venceu (%d)\n",
-         card1.numberTouristAttractions > card2.numberTouristAttractions ? card1.id : card2.id,
-         card1.numberTouristAttractions > card2.numberTouristAttractions);
-
-  printf("Densidade Populacional: Carta %d venceu (%d)\n",
-         card1.populationDensity < card2.populationDensity ? card1.id : card2.id,
-         card1.populationDensity < card2.populationDensity);
-
-  printf("PIB per Capita: Carta %d venceu (%d)\n",
-         card1.pibPerCapita > card2.pibPerCapita ? card1.id : card2.id,
-         card1.pibPerCapita > card2.pibPerCapita);
-
-  printf("Super Poder: Carta %d venceu (%d)\n",
-         superPower1 > superPower2 ? card1.id : card2.id,
-         superPower1 > superPower2);
+  printComparisonResult("Populacao", card1.id, card2.id, card1.population > card2.population);
+  printComparisonResult("Area", card1.id, card2.id, card1.area > card2.area);
+  printComparisonResult("PIB", card1.id, card2.id, card1.pib > card2.pib);
+  printComparisonResult("Pontos Turisticos", card1.id, card2.id, card1.numberTouristAttractions > card2.numberTouristAttractions);
+  printComparisonResult("Densidade Populacional", card1.id, card2.id, card1.populationDensity > card2.populationDensity);
+  printComparisonResult("PIB per Capita", card1.id, card2.id, card1.pibPerCapita > card2.pibPerCapita);
+  printComparisonResult("Super Poder", card1.id, card2.id, superPower1 > superPower2);
 }
 
 int main()
