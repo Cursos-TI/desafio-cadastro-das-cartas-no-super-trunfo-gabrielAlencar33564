@@ -108,8 +108,8 @@ void compareCards(Card card1, Card card2)
   printComparisonResult("Super Poder", superPower1, superPower2);
 }
 
-// funcao para comparar os atributos das cartas
-void resultComparisonAttribute(const char *attribute, const char *text1, const char *text2, float value1, float value2)
+// funcao para mostar o resultado da comparacao e retornar o valor da vitoria, positivo para a carta 1, negativo para a carta 2 e zero para empate
+float resultComparisonAttribute(const char *attribute, const char *text1, const char *text2, float value1, float value2)
 {
   printf("Comparacao das cartas (Atributo: %s):\n", attribute);
   printf("\n");
@@ -118,35 +118,30 @@ void resultComparisonAttribute(const char *attribute, const char *text1, const c
   printf("Carta 2 - %s\n", text2);
 
   if (value1 > value2)
+  {
     printf("Resultado: Carta 1 venceu!\n");
+    return 1.0;
+  }
   else if (value1 < value2)
+  {
     printf("Resultado: Carta 2 venceu!\n");
+    return -1.0;
+  }
   else
+  {
     printf("Resultado: Empate!\n");
+    return 0.00;
+  }
 }
 
-// menu para escolher qual atributo comparar
-void menuCompareAtributes(Card card1, Card card2)
+// funcao para comparar os atributos das cartas
+void compareAttrubutes(Card card1, Card card2, int currentOption, float *result)
 {
-  int option;
-
-  printf("1 - Comparar Populacao\n");
-  printf("2 - Comparar Area\n");
-  printf("3 - Comparar PIB\n");
-  printf("4 - Comparar Pontos Turisticos\n");
-  printf("5 - Comparar Densidade Populacional\n");
-  printf("6 - Comparar PIB per Capita\n");
-  printf("\n");
-
-  printf("Digite a opcao desejada: ");
-  scanf("%d", &option);
-  printf("\n");
-
-  float cardResult1, cardResult2;
   const char *atribute;
+  float cardResult1, cardResult2;
   char cardText1[256], cardText2[256];
 
-  switch (option)
+  switch (currentOption)
   {
   case 1:
     atribute = "Populacao";
@@ -191,40 +186,101 @@ void menuCompareAtributes(Card card1, Card card2)
     sprintf(cardText2, "%s (%s): %.2f reais", card1.state, card1.cityName, card2.pibPerCapita);
     break;
   default:
-    printf("Opcao invalida\n");
+    printf("Opcao invalida. Digite novamente!\n");
+    printf("\n");
     return;
   }
 
-  resultComparisonAttribute(atribute, cardText1, cardText2, cardResult1, cardResult2);
+  *result += resultComparisonAttribute(atribute, cardText1, cardText2, cardResult1, cardResult2);
+}
+
+// funcao para escolher a opcao da comparacao
+void selectOption(Card card1, Card card2, int currentOption, int *option)
+{
+  if (currentOption != 1)
+    printf("1 - Comparar Populacao\n");
+  if (currentOption != 2)
+    printf("2 - Comparar Area\n");
+  if (currentOption != 3)
+    printf("3 - Comparar PIB\n");
+  if (currentOption != 4)
+    printf("4 - Comparar Pontos Turisticos\n");
+  if (currentOption != 5)
+    printf("5 - Comparar Densidade Populacional\n");
+  if (currentOption != 6)
+    printf("6 - Comparar PIB per Capita\n");
+  printf("7 - Mostar cartas\n");
+
+  printf("\n");
+  printf("Digite a opcao desejada: ");
+  scanf("%d", option);
+  printf("\n");
+
+  if (*option == 7)
+  {
+    printCard(card1);
+    printf("\n");
+    printCard(card2);
+    printf("\n");
+    selectOption(card1, card2, currentOption, option);
+    return;
+  }
+
+  // validando a opcao escolhida
+  if (currentOption == *option)
+  {
+    printf("Essa escolha ja foi feita. Escolha outra!\n");
+    printf("\n");
+
+    // chamando a funcao novamente caso a opcao ja tenha sido escolhida
+    selectOption(card1, card2, currentOption, option);
+    return;
+  }
+  else if (*option < 1 || *option > 7)
+  {
+    printf("Opcao invalida. Digite novamente!\n");
+    printf("\n");
+
+    // chamando a funcao novamente caso a opcao seja invalida
+    selectOption(card1, card2, currentOption, option);
+    return;
+  }
 }
 
 int main()
 {
-  // Card card1, card2;
-
-  // // Chamando a funcao para criar as cartas
-  // printf("\n");
-  // createCard(&card1, 1);
-  // printf("\n");
-  // createCard(&card2, 2);
-  // printf("\n");
-
-  // // Chamando a funcao para comparar as cartas
-  // compareCards(card1, card2);
-  // printf("\n");
-
   // Cartas pre-definidas
   Card card1 = {1, "Sao Paulo", "S01", "Sao Paulo", 12345678, 1523.45, 345678.90, 10, 8092.34, 28000.67};
   Card card2 = {2, "Rio de Janeiro", "R02", "Rio de Janeiro", 6789012, 1200.67, 234567.89, 8, 5654.78, 34567.89};
 
+  // imprimindo as cartas
   printCard(card1);
   printf("\n");
   printCard(card2);
   printf("\n");
 
-  // Chamando menu para escolher qual atributo comparar
-  menuCompareAtributes(card1, card2);
+  // armazenando a escolha do primeiro e segundo atributo
+  int firstOption = 0, secondOption = 0;
+  // armazenando o resultado da vitoria
+  float result = 0.0;
+
+  // menu para selecionar os atributos a serem comparados da primeira carta
+  selectOption(card1, card2, 0, &firstOption);
+  compareAttrubutes(card1, card2, firstOption, &result);
   printf("\n");
+
+  // menu para selecionar os atributos a serem comparados da segunda carta
+  selectOption(card1, card2, firstOption, &secondOption);
+  compareAttrubutes(card1, card2, secondOption, &result);
+  printf("\n");
+
+  // imprimindo o resultado final
+  if (result > 0)
+    printf("Resultado final: Carta 1 venceu!\n");
+  else if (result < 0)
+    printf("Resultado final: Carta 2 venceu!\n");
+  else
+    printf("Resultado final: Empate!\n");
 
   return 0;
 }
